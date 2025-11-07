@@ -1049,7 +1049,7 @@ int main () {
 (defun compilation-diff? (lsp-file-path)
   (let ((diff (string-diff
                (with-output-to-string (s)
-                 (paren::compile-lsp-forms
+                 (paren::compile-parenc-forms
                   (paren::read-file-into-list
                    lsp-file-path)
                   :stream s))
@@ -1061,16 +1061,16 @@ int main () {
     diff))
 
 (test compilation-difference?
-  (is (not (compilation-diff? "../examples/hello-world.lsp")))
-  (is (not (compilation-diff? "../examples/switch.lsp")))
-  (is (not (compilation-diff? "../examples/cond.lsp")))
-  (is (not (compilation-diff? "../examples/control-flow.lsp")))
-  (is (not (compilation-diff? "../examples/macro-example.lsp")))
-  (is (not (compilation-diff? "../examples/type-struct-example.lsp")))
-  (is (not (compilation-diff? "../examples/higher-order-function.lsp")))
-  (is (not (compilation-diff? "../examples/nested-loops.lsp")))
-  (is (not (compilation-diff? "../examples/c-macro.lsp")))
-  (is (not (compilation-diff? "../examples/sectorlisp.lsp"))))
+  (is (not (compilation-diff? "../examples/hello-world.parenc")))
+  (is (not (compilation-diff? "../examples/switch.parenc")))
+  (is (not (compilation-diff? "../examples/cond.parenc")))
+  (is (not (compilation-diff? "../examples/control-flow.parenc")))
+  (is (not (compilation-diff? "../examples/macro-example.parenc")))
+  (is (not (compilation-diff? "../examples/type-struct-example.parenc")))
+  (is (not (compilation-diff? "../examples/higher-order-function.parenc")))
+  (is (not (compilation-diff? "../examples/nested-loops.parenc")))
+  (is (not (compilation-diff? "../examples/c-macro.parenc")))
+  (is (not (compilation-diff? "../examples/sectorlisp.parenc"))))
 
 ;;;
 
