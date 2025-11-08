@@ -1046,33 +1046,31 @@ int main () {
 (string-diff (format nil "a~%b ~%c")
              (format nil "a~%b~%c"))
 
-(defun compilation-diff? (lsp-file-path)
+(defun compilation-diff? (parenc-file-path)
   (let ((diff (string-diff
                (with-output-to-string (s)
                  (paren::compile-parenc-forms
                   (paren::read-file-into-list
-                   lsp-file-path)
+                   parenc-file-path)
                   :stream s))
                (paren::read-file-to-string
-                (paren::c-path lsp-file-path)))))
+                (paren::c-path parenc-file-path)))))
     (when diff (log:info diff
-                         lsp-file-path
-                         (paren::c-path lsp-file-path)))
+                         parenc-file-path
+                         (paren::c-path parenc-file-path)))
     diff))
 
 (test compilation-difference?
-  (is (not (compilation-diff? "../examples/hello-world.parenc")))
-  (is (not (compilation-diff? "../examples/switch.parenc")))
-  (is (not (compilation-diff? "../examples/cond.parenc")))
-  (is (not (compilation-diff? "../examples/control-flow.parenc")))
-  (is (not (compilation-diff? "../examples/macro-example.parenc")))
-  (is (not (compilation-diff? "../examples/type-struct-example.parenc")))
-  (is (not (compilation-diff? "../examples/higher-order-function.parenc")))
-  (is (not (compilation-diff? "../examples/nested-loops.parenc")))
-  (is (not (compilation-diff? "../examples/c-macro.parenc")))
-  (is (not (compilation-diff? "../examples/sectorlisp.parenc"))))
-
-;;;
+  (is (not (compilation-diff? "examples/hello-world.parenc")))
+  (is (not (compilation-diff? "examples/switch.parenc")))
+  (is (not (compilation-diff? "examples/cond.parenc")))
+  (is (not (compilation-diff? "examples/control-flow.parenc")))
+  (is (not (compilation-diff? "examples/macro-example.parenc")))
+  (is (not (compilation-diff? "examples/type-struct-example.parenc")))
+  (is (not (compilation-diff? "examples/higher-order-function.parenc")))
+  (is (not (compilation-diff? "examples/nested-loops.parenc")))
+  (is (not (compilation-diff? "examples/c-macro.parenc")))
+  (is (not (compilation-diff? "examples/sectorlisp.parenc"))))
 
 (defparameter *root-dir* "/tmp/paren/")
 
@@ -1152,7 +1150,7 @@ Error: Unmatched STDERR.
 (test execution-test
 
   (is
-   (test-c-program "../examples/macro-example.c"
+   (test-c-program "examples/macro-example.c"
                    :stdin ""
                    :expected-stdout "~:
 foo_INT(5, 10) = 30
@@ -1162,13 +1160,13 @@ foo_DOUBLE(1.234, 4.567) = 11.602
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/higher-order-function.c"
+   (test-c-program "examples/higher-order-function.c"
                    :stdin ""
                    :expected-stdout "1 4 9 16 25 36 49 64 81 100 "
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/nested-loops.c"
+   (test-c-program "examples/nested-loops.c"
                    :stdin ""
                    :expected-stdout "~:
 0 0
@@ -1187,7 +1185,7 @@ foo_DOUBLE(1.234, 4.567) = 11.602
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/control-flow.c"
+   (test-c-program "examples/control-flow.c"
                    :stdin "1 1"
                    :expected-stdout
                    "~:
@@ -1199,7 +1197,7 @@ x is positive.
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/control-flow.c"
+   (test-c-program "examples/control-flow.c"
                    :stdin "1 -1"
                    :expected-stdout
                    "~:
@@ -1212,7 +1210,7 @@ y is negative.
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/control-flow.c"
+   (test-c-program "examples/control-flow.c"
                    :stdin "-1 1"
                    :expected-stdout
                    "~:
@@ -1224,7 +1222,7 @@ x is negative.
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/control-flow.c"
+   (test-c-program "examples/control-flow.c"
                    :stdin "-1 -1"
                    :expected-stdout
                    "~:
@@ -1237,7 +1235,7 @@ x is negative.
   ;;
 
   (is
-   (test-c-program "../examples/cond.c"
+   (test-c-program "examples/cond.c"
                    :stdin ""
                    :expected-stdout
                    "Hello!~%i is 15 or 20~%"
@@ -1245,14 +1243,14 @@ x is negative.
   ;;
 
   (is
-   (test-c-program "../examples/hello-world.c"
+   (test-c-program "examples/hello-world.c"
                    :stdin ""
                    :expected-stdout "Hello, world!"
                    :expected-stderr ""))
   ;;
 
   (is
-   (test-c-program "../examples/type-struct-example.c"
+   (test-c-program "examples/type-struct-example.c"
                    :stdin ""
                    :expected-stdout "~:
 x1->value             = 10
@@ -1264,7 +1262,7 @@ x1->next->next->value = 30
   ;;
 
   (is
-   (test-c-program "../examples/c-macro.c"
+   (test-c-program "examples/c-macro.c"
                    :stdin ""
                    :expected-stdout
                    "x = 10, y = 5~%"
@@ -1272,7 +1270,7 @@ x1->next->next->value = 30
   ;;
 
   (is
-   (test-c-program "../examples/switch.c"
+   (test-c-program "examples/switch.c"
                    :stdin "1"
                    :expected-stdout
                    "Enter an integer for i: i = 1~%"
@@ -1281,7 +1279,7 @@ x1->next->next->value = 30
   (is
    (eq :error
        (handler-case
-           (test-c-program "../examples/switch.c"
+           (test-c-program "examples/switch.c"
                            :stdin "1"
                            :expected-stdout
                            "Some randomly written stdout."
@@ -1289,14 +1287,14 @@ x1->next->next->value = 30
          (error (e) (declare (ignore e)) :error))))
 
   (is
-   (test-c-program "../examples/switch.c"
+   (test-c-program "examples/switch.c"
                    :stdin "3 1"
                    :expected-stdout
                    "Enter an integer for i: i = 3~%Enter an integer for j: j = 1~%"
                    :expected-stderr ""))
 
   (is
-   (test-c-program "../examples/switch.c"
+   (test-c-program "examples/switch.c"
                    :stdin "4"
                    :expected-stdout
                    "Enter an integer for i: Wrong guess. Aborting..~%"
@@ -1306,58 +1304,58 @@ x1->next->next->value = 30
   ;; Sector Lisp
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "(QUOTE A) "
                    :expected-stdout "A~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "(QUOTE A) "
                    :expected-stdout "A~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "(QUOTE (QUOTE A)) "
                    :expected-stdout "(QUOTE A)~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "(QUOTE (QUOTE A)) "
                    :expected-stdout "(QUOTE A)~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "(QUOTE (+ 1 2 3)) "
                    :expected-stdout "(+ 1 2 3)~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "(QUOTE (+ 1 2 3)) "
                    :expected-stdout "(+ 1 2 3)~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "(EQ (QUOTE A) (QUOTE A)) "
                    :expected-stdout "T~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "(EQ (QUOTE A) (QUOTE A)) "
                    :expected-stdout "T~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "(EQ (QUOTE T) (QUOTE F)) "
                    :expected-stdout "NIL~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "(EQ (QUOTE T) (QUOTE F)) "
                    :expected-stdout "NIL~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "
   (EQ (QUOTE T) (QUOTE F))
   (EQ (QUOTE A) (QUOTE A)) "
                    :expected-stdout "NIL~%T~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "
   (EQ (QUOTE T) (QUOTE F))
   (EQ (QUOTE A) (QUOTE A)) "
@@ -1365,7 +1363,7 @@ x1->next->next->value = 30
 
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "
   ((LAMBDA (FF X) (FF X))
    (QUOTE (LAMBDA (X)
@@ -1374,7 +1372,7 @@ x1->next->next->value = 30
    (QUOTE ((A) B C))) "
                    :expected-stdout "A~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "
   ((LAMBDA (FF X) (FF X))
    (QUOTE (LAMBDA (X)
@@ -1384,7 +1382,7 @@ x1->next->next->value = 30
                    :expected-stdout "A~%"))
 
   (is
-   (test-c-program "../examples/sectorlisp/lisp.c"
+   (test-c-program "examples/sectorlisp/lisp.c"
                    :stdin "
   ((LAMBDA (ASSOC EVCON PAIRLIS EVLIS APPLY EVAL)
      (EVAL (QUOTE ((LAMBDA (FF X) (FF X))
@@ -1433,7 +1431,7 @@ x1->next->next->value = 30
               ((QUOTE T) (APPLY (CAR E) (EVLIS (CDR E) A) A)))))) "
                    :expected-stdout "A~%"))
   (is
-   (test-c-program "../examples/sectorlisp.c"
+   (test-c-program "examples/sectorlisp.c"
                    :stdin "
   ((LAMBDA (ASSOC EVCON PAIRLIS EVLIS APPLY EVAL)
      (EVAL (QUOTE ((LAMBDA (FF X) (FF X))
